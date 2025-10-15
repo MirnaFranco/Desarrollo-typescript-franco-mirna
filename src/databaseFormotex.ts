@@ -2,30 +2,37 @@ import "reflect-metadata";
 import { DataSource } from "typeorm";
 import { Usuario } from "./Entidades/Usuario";
 import { Equipo } from "./Entidades/Equipo";
+import { Asignacion } from "./Entidades/Asignacion";
 
-// Validar variables de entorno obligatorias
-const {
-  DB_HOST,
-  DB_PORT,
-  DB_USER,
-  DB_PASSWORD,
-  DB_NAME
-} = process.env;
+export class Database {
+  private static instance: DataSource;
 
-if (!DB_HOST || !DB_USER || !DB_PASSWORD || !DB_NAME) {
-  throw new Error("Faltan variables de entorno de la base de datos (DB_HOST, DB_USER, DB_PASSWORD, DB_NAME)");
+  private constructor() {}
+
+  public static getInstance(): DataSource {
+    if (!Database.instance) {
+      Database.instance = new DataSource({
+        type: "mysql",
+        host: process.env.DB_HOST ?? "localhost",
+        port: Number(process.env.DB_PORT) || 3306,
+        username: process.env.DB_USER ?? "root",
+        password: process.env.DB_PASSWORD ?? "",
+        database: process.env.DB_NAME ?? "formotex",
+        synchronize: true,
+        logging: false,
+        entities: [Usuario, Equipo, Asignacion],
+      });
+    }
+    return Database.instance;
+  }
+
+  public static async connect(): Promise<DataSource> {
+    const ds = Database.getInstance();
+    if (!ds.isInitialized) {
+      await ds.initialize();
+      console.log(" Conectado a la base de datos");
+    }
+    return ds;
+  }
 }
 
-export const AppDataSource = new DataSource({
-  type: "mysql",
-  host: DB_HOST,
-  port: Number(DB_PORT) || 3306,
-  username: DB_USER,
-  password: DB_PASSWORD,
-  database: DB_NAME,
-  synchronize: true, // solo para desarrollo, genera tablas automáticamente
-  logging: false,
-  entities: [Usuario, Equipo],
-  migrations: [],
-  subscribers: [],
-});

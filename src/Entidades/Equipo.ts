@@ -3,27 +3,27 @@ import { Usuario } from "./Usuario";
 import { EspecificacionEquipo } from "./EspecificacionEquipo";
 import { Asignacion } from "./Asignacion";
 
-@Entity()
+@Entity({name:"equipos"})
 export class Equipo {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({name: "id_equipo"})
   id_equipo!: number;
 
-  @Column()
+  @Column({ type: "varchar",length: 100, nullable: false })
   nombre!: string;
 
-  @Column({ unique: true })
+  @Column( { type: "varchar", length: 100, unique: true, nullable: false})
   numero_serie!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   modelo!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   ubicacion!: string;
 
-  @Column({ default: "disponible" })
+  @Column({type: "varchar", length: 50, default: "disponible" })
   estado!: string;
 
-  @ManyToOne(() => Usuario, (usuario) => usuario.equipos)
+  @ManyToOne(() => Usuario, (usuario) => usuario.equipos, { onDelete: "SET NULL", nullable: true })
   responsable!: Usuario;
 
   //  Relación con EspecificacionEquipo

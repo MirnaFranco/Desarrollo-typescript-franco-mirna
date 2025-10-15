@@ -13,7 +13,7 @@ id_especificacion!: number;
 equipo!: Equipo;
 
 
-@Column({ length: 200, nullable: true })
+@Column({ type: "varchar", length: 200, nullable: true })
 cpu?: string;
 
 
@@ -25,6 +25,6 @@ ram_gb?: number;
 almacenamiento_gb?: number;
 
 
-@Column({ length: 150, nullable: true, name: "sistema_operativo" })
+@Column({ type:"varchar",length: 150, nullable: true, name: "sistema_operativo" })
 sistema_operativo?: string;
 }

@@ -1,7 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { Usuario } from "../Entidades/Usuario";
-import { AppDataSource } from "../databaseFormotex";
+import { Database } from "../databaseFormotex";
 import { ApiError } from "../utils/ApiError";
 
 interface JwtPayload {
@@ -17,7 +17,8 @@ export const authenticateToken = async (req: Request, res: Response, next: NextF
 
   try {
     const payload = jwt.verify(token, process.env.JWT_SECRET as string) as JwtPayload;
-    const usuarioRepo = AppDataSource.getRepository(Usuario);
+    const ds = await Database.connect();
+    const usuarioRepo = ds.getRepository(Usuario);
     const usuario = await usuarioRepo.findOneBy({ id_usuario: payload.id_usuario });
     if (!usuario) throw new ApiError(401, "Usuario no encontrado");
 

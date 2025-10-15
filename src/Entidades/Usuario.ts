@@ -3,21 +3,21 @@ import { Equipo } from "./Equipo";
 import { Asignacion } from "./Asignacion";
 
 
-@Entity()
+@Entity({name: "usuarios"})
 export class Usuario {
   @PrimaryGeneratedColumn()
   id_usuario!: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   nombre!: string;
 
-  @Column({ unique: true })
+  @Column({type: "varchar", length: 100, unique: true, nullable: false})
   correo!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 255, nullable: false })
   contrasena!: string;
 
-  @Column({ default: "user" })
+  @Column({ type: "varchar", length: 50, default: "user" })
   rol!: string;
 
   @OneToMany(() => Equipo, (equipo) => equipo.responsable)

@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: formotex_app
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    networks:
+      - formotex-network
+    command: >
+      sh -c "npm install && npx tsx src/app.ts"
+
+  db:
+    image: mysql:8.1
+    container_name: formotex_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: formotex
+      MYSQL_USER: formotex_user
+      MYSQL_PASSWORD: userpassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - formotex-network
+
+volumes:
+  mysql-data:
+
+networks:
+  formotex-network:
+    driver: bridge
